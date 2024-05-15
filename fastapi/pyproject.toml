@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "tulcz-stin-2024"
+version = "1.0.0"
+description = "Weather web application for semestral work for STIN 2024 at TUL"
+authors = ["German Semin <german.semin@tul.cz>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
