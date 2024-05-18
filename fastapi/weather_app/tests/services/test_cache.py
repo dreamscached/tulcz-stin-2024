@@ -1,7 +1,10 @@
+"""Tests CacheService implementations."""
+
 import time
 
-from weather_app.services.cache import InMemoryCacheService
 import pytest
+
+from weather_app.services.cache import InMemoryCacheService
 
 @pytest.fixture
 def cache() -> InMemoryCacheService:
