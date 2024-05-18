@@ -1,0 +1,43 @@
+name: Run Pylint
+
+on:
+  push:
+    paths:
+      - "fastapi/weather_app/**/*.py"
+      - ".github/workflows/pylint.yml"
+  pull_request:
+    paths:
+      - "fastapi/weather_app/**/*.py"
+      - ".github/workflows/pylint.yml"
+
+jobs:
+  pylint:
+    name: Run Pylint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: { python-version: "3.12" }
+
+      - name: Setup Poetry
+        uses: Gr1N/setup-poetry@v8
+
+      - name: Pull Poetry dependencies cache
+        id: poetry-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('fastapi/poetry.lock') }}
+
+      - name: Install Poetry dependencies
+        if: steps.poetry-cache.outputs.cache-hit != 'true'
+        working-directory: fastapi
+        run: poetry install
+
+      - name: Run Pylint check
+        working-directory: fastapi
+        run: poetry run pylint --fail-under=10 **/*.py
