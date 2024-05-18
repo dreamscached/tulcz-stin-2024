@@ -21,10 +21,16 @@ jobs:
         uses: Gr1N/setup-poetry@v8
 
       - name: Pull Poetry dependencies cache
+        id: poetry-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install Poetry dependencies
+        if: steps.poetry-cache.outputs.cache-hit != 'true'
+        working-directory: fastapi
+        run: poetry install
 
       - name: Run Pytest tests
         working-directory: fastapi
