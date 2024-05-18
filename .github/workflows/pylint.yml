@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - "fastapi/weather_app/**/*.py"
-      - ".github/workflows/pytest.yml"
+      - ".github/workflows/pylint.yml"
   pull_request:
     paths:
       - "fastapi/weather_app/**/*.py"
-      - ".github/workflows/pytest.yml"
+      - ".github/workflows/pylint.yml"
 
 jobs:
   pylint:
