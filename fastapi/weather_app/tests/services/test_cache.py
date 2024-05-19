@@ -75,3 +75,8 @@ def test_delete(cache: InMemoryCacheService) -> None:
     cache.set("key1", "value1")
     cache.delete("key1")
     assert cache.get("key1") is None
+
+#pylint: disable=redefined-outer-name
+def test_delete_nonexistent(cache: InMemoryCacheService) -> None:
+    """Test key deletion of nonexistent key."""
+    cache.delete("nonexistent")
