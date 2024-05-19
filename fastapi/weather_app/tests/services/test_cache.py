@@ -1,5 +1,6 @@
 """Tests CacheService implementations."""
 
+from typing import Any
 import time
 
 import pytest
@@ -11,11 +12,29 @@ def cache() -> InMemoryCacheService:
     """Fixture to create InMemoryCacheService and inject to test cases."""
     return InMemoryCacheService()
 
-#pylint: disable=redefined-outer-name
-def test_set_and_get(cache: InMemoryCacheService) -> None:
+
+@pytest.mark.parametrize("key, value", [
+    ("key", "value"),
+    ("key", None),
+    ("key", 42),
+    ("key", 3.14),
+    ("key", True),
+    ("key", [3.14, 2.79]),
+    ("key", [3.14, 42]),
+    ("key", {"foo": "bar"}),
+    ("key", {"foo": "bar", "baz": 3.14}),
+    ("", "value"),
+    (None, "value")
+])
+def test_set_nottl(
+    #pylint: disable=redefined-outer-name
+    cache: InMemoryCacheService,
+    key: str,
+    value: Any
+) -> None:
     """Test setting value in cache (no TTL.)"""
-    cache.set("key1", "value1")
-    assert cache.get("key1") == "value1"
+    cache.set(key, value)
+    assert cache.get(key) == value
 
 #pylint: disable=redefined-outer-name
 def test_get_nonexistent_key(cache: InMemoryCacheService) -> None:
