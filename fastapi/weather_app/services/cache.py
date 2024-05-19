@@ -53,7 +53,7 @@ class InMemoryCacheService(CacheService):
             self.set_ttl(key, ttl)
 
     def set_ttl(self, key: str, ttl: Optional[int]) -> None:
-        if ttl is None:
+        if ttl is None or ttl == 0:
             self._ttl.pop(key, None)
         else:
             self._ttl[key] = time.time() + ttl
