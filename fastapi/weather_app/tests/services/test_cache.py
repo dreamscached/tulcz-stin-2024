@@ -56,7 +56,7 @@ def test_set_with_ttl(
     """Test cache expiry (setting with TTL.)"""
     cache.set(key, value, ttl)
     assert cache.get(key) == value
-    if ttl is not None:
+    if ttl: # not 0 or None
         time.sleep(ttl + 0.1)
         assert cache.get(key) is None
 
