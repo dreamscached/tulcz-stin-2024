@@ -77,7 +77,7 @@ def test_set_ttl(
     assert cache.get(key) == value
 
     cache.set_ttl(key, ttl)
-    if ttl is not None:
+    if ttl: # not 0 or None
         time.sleep(ttl + 0.1)
         assert cache.get(key) is None
     else:
