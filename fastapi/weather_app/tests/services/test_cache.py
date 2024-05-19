@@ -41,13 +41,24 @@ def test_get_nonexistent_key(cache: InMemoryCacheService) -> None:
     """Test getting missing key."""
     assert cache.get("nonexistent") is None
 
-#pylint: disable=redefined-outer-name
-def test_set_with_ttl(cache: InMemoryCacheService) -> None:
+@pytest.mark.parametrize("key, value, ttl", [
+    ("key", "value", 1),
+    ("key", "value", 0),
+    ("key", "value", None),
+])
+def test_set_with_ttl(
+    #pylint: disable=redefined-outer-name
+    cache: InMemoryCacheService,
+    key: str,
+    value: Any,
+    ttl: int | None
+) -> None:
     """Test cache expiry (setting with TTL.)"""
-    cache.set("key1", "value1", ttl=1)
-    assert cache.get("key1") == "value1"
-    time.sleep(1.1)
-    assert cache.get("key1") is None
+    cache.set(key, value, ttl)
+    assert cache.get(key) == value
+    if ttl is not None:
+        time.sleep(ttl + 0.1)
+        assert cache.get(key) is None
 
 #pylint: disable=redefined-outer-name
 def test_set_ttl(cache: InMemoryCacheService) -> None:
