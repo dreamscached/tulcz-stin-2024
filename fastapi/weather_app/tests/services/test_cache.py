@@ -60,14 +60,28 @@ def test_set_with_ttl(
         time.sleep(ttl + 0.1)
         assert cache.get(key) is None
 
-#pylint: disable=redefined-outer-name
-def test_set_ttl(cache: InMemoryCacheService) -> None:
+@pytest.mark.parametrize("key, value, ttl", [
+    ("key", "value", 0),
+    ("key", "value", 1),
+    ("key", "value", None),
+])
+def test_set_ttl(
+    #pylint: disable=redefined-outer-name
+    cache: InMemoryCacheService,
+    key: str,
+    value: Any,
+    ttl: int
+) -> None:
     """Test updating key TTL."""
-    cache.set("key1", "value1")
-    cache.set_ttl("key1", 1)
-    assert cache.get("key1") == "value1"
-    time.sleep(1.1)
-    assert cache.get("key1") is None
+    cache.set(key, value)
+    assert cache.get(key) == value
+
+    cache.set_ttl(key, ttl)
+    if ttl is not None:
+        time.sleep(ttl + 0.1)
+        assert cache.get(key) is None
+    else:
+        assert cache.get(key) == value
 
 #pylint: disable=redefined-outer-name
 def test_delete(cache: InMemoryCacheService) -> None:
