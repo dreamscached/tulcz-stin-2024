@@ -32,7 +32,7 @@ def get_weather_service(
     thread_pool: ThreadPoolService = Depends(get_thread_pool_service)
 ) -> WeatherService:
     """Dependency factory to create instance of WeatherService."""
-    api_key = os.environ["APP_OWN_API_KEY"]
+    api_key = os.environ["APP_OWM_API_KEY"]
     return OpenWeatherService(api_key, cache, thread_pool)
 
 
