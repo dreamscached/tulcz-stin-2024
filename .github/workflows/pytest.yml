@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - "fastapi/weather_app/**/*.py"
+      - "fastapi/pyproject.toml"
+      - "fastapi/poetry.lock"
       - ".github/workflows/pytest.yml"
   pull_request:
     paths:
       - "fastapi/weather_app/**/*.py"
+      - "fastapi/pyproject.toml"
+      - "fastapi/poetry.lock"
       - ".github/workflows/pytest.yml"
 
 jobs:
