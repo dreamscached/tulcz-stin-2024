@@ -13,4 +13,4 @@
     pull: always
     restart_policy: on-failure
     published_ports:
-      - 0.0.0.0:8000:80
+      - 0.0.0.0:80:8000
