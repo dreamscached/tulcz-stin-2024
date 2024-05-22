@@ -29,7 +29,7 @@ class ThreadPoolService(ABC):
         """Shuts down the thread pool."""
 
 
-def get_thread_pool_service() -> ThreadPoolService:
+async def get_thread_pool_service() -> ThreadPoolService:
     """Dependency factory to create instance of ThreadPoolService."""
     loop = asyncio.get_event_loop()
     return AioThreadPoolService(loop, 8)
