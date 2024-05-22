@@ -1,0 +1,144 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  pytest:
+    name: Run Pytest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version: "3.12"
+          cache: poetry
+          cache-dependency-path: fastapi/poetry.lock
+
+      - name: Install Poetry dependencies
+        if: steps.setup-python.outputs.cache-hit != 'true'
+        working-directory: fastapi
+        run: poetry install
+
+      - name: Run Pytest tests
+        working-directory: fastapi
+        run: poetry run pytest
+
+  pylint:
+    name: Run Pylint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version: "3.12"
+          cache: poetry
+          cache-dependency-path: fastapi/poetry.lock
+
+      - name: Install Poetry dependencies
+        if: steps.setup-python.outputs.cache-hit != 'true'
+        working-directory: fastapi
+        run: poetry install
+
+      - name: Run Pylint check
+        working-directory: fastapi
+        run: poetry run pylint --fail-under=10 **/*.py
+
+  docker_build:
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    needs: [ pytest, pylint ]
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata
+        uses: docker/metadata-action@v5
+        id: docker_meta
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v5
+        with:
+          context: fastapi
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+
+  docker_deploy:
+    if: github.ref == 'refs/heads/master'
+    needs: [ docker_build ]
+
+    name: Deploy Docker image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ansible & Ansible Playbook
+        run: sudo apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y ansible
+
+      - name: Read inventory
+        id: read_inventory
+        run: |
+          inventory_ini="$(<fastapi/ansible/inventory.ini)"
+          printf "inventory_ini<<EOF\n%s\nEOF" "$inventory_ini" >> $GITHUB_OUTPUT
+
+      - name: Deploy application
+        uses: dawidd6/action-ansible-playbook@c97d71562fcba83cc1ea0602d5a77013427f7571
+        with:
+          directory: fastapi/ansible
+          playbook: deploy.yml
+          requirements: requirements.yml
+          inventory: ${{ steps.read_inventory.outputs.inventory_ini }}
+          key: ${{ secrets.SSH_GITHUB_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
