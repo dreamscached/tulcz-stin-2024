@@ -9,10 +9,12 @@ from enum import Enum
 import datetime
 import os
 
+from weather_app.errors import UpstreamError
 from weather_app.services.cache import CacheService, get_cache_service
 from weather_app.services.thread import ThreadPoolService, get_thread_pool_service
 
 from pyowm import OWM
+from pyowm.commons.exceptions import PyOWMError
 from pyowm.weatherapi25.weather import Weather
 from pyowm.weatherapi25.location import Location
 from fastapi import Depends
@@ -106,18 +108,18 @@ class OpenWeatherService(WeatherService):
         def to_toponym(it: Location) -> ToponymData:
             return ToponymData(it.name, it.country, it.lat, it.lon)
 
-        raw = await self._th_pool.run_in_thread(self._geocode.geocode, toponym)
-        return list(map(to_toponym, raw))
+        try:
+            raw = await self._th_pool.run_in_thread(
+                self._geocode.geocode, toponym)
+            return list(map(to_toponym, raw))
+        except PyOWMError as e:
+            raise UpstreamError() from e
 
     async def get_weather_forecast(
         self,
         location: tuple[float, float],
         temp_type: TempUnit = TempUnit.CELSIUS
     ) -> list[Forecast]:
-        forecast_raw = await self._th_pool.run_in_thread(
-            self._weather.forecast_at_coords,
-            *location, "3h")
-
         def to_forecast(weather: Weather) -> Forecast:
             temperature_raw = weather.temperature(temp_type.value)
             temperature = Temperature(temperature_raw["temp"],
@@ -129,4 +131,10 @@ class OpenWeatherService(WeatherService):
                             WeatherType(weather.status),
                             temperature)
 
-        return list(map(to_forecast, forecast_raw.forecast.weathers))
+        try:
+            forecast_raw = await self._th_pool.run_in_thread(
+                self._weather.forecast_at_coords,
+                *location, "3h")
+            return list(map(to_forecast, forecast_raw.forecast.weathers))
+        except PyOWMError as e:
+            raise UpstreamError() from e
