@@ -1,0 +1,11 @@
+- name: Deploy App
+  hosts: servers
+  gather_facts: true
+
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+    image_name: "{{ lookup('env', 'IMAGE_NAME') }}"
+
+  roles:
+    - role: deploy_app
+    - role: prune_images

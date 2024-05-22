@@ -1,0 +1,3 @@
+deploy_app__ghcr_token: "{{ github_token }}"
+deploy_app__image_name: "{{ image_name }}"
+deploy_app__container_name: "weather-app"
