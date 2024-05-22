@@ -5,6 +5,7 @@
   vars:
     github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
     image_name: "{{ lookup('env', 'IMAGE_NAME') }}"
+    owm_api_key: "{{ lookup('env', 'OWM_API_KEY') }}"
 
   roles:
     - role: deploy_app
