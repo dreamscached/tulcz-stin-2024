@@ -2,15 +2,24 @@
 Router configuration for /weather API route group + route handlers.
 """
 
+from typing import Annotated
+
 from weather_app.services.weather import WeatherService, get_weather_service
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 
 router = APIRouter(prefix="/weather")
 
-@router.get("/forecast/{toponym}")
-async def get_forecaset(
-    toponym: str,
+@router.get(
+    path="/forecast/{toponym}",
+    summary="Get forecast",
+    description="Get a weather forecast for the given toponym"
+)
+async def get_forecast(
+    toponym: Annotated[str | None, Path(
+        title="Toponym to lookup", example="Liberec, CZ",
+        min_length=2, max_length=32
+    )],
     weather_service: WeatherService = Depends(get_weather_service)
 ) -> dict:
     """
