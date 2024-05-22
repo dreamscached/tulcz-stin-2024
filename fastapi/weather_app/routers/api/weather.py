@@ -4,6 +4,7 @@ Router configuration for /weather API route group + route handlers.
 
 from typing import Annotated
 
+from weather_app.errors import UpstreamError
 from weather_app.services.weather import WeatherService, get_weather_service
 
 from fastapi import APIRouter, Depends, HTTPException, Path, status
@@ -25,10 +26,20 @@ async def get_forecast(
     """
     Locate a toponym and return possible matches with geographical coordinates.
     """
-    results = await weather_service.get_query_toponym(toponym)
+
+    try:
+        results = await weather_service.get_query_toponym(toponym)
+    except UpstreamError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not fetch data from upstream API."
+        ) from e
+
     if not results:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Toponym was not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Toponym was not found."
+        )
 
     top_data = results[0]
     top_location = (top_data.latitude, top_data.longitude)
