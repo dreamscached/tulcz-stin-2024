@@ -1,0 +1,16 @@
+- name: Login to ghcr.io Docker image registry
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: dreamscached
+    password: "{{ deploy_app__ghcr_token }}"
+
+- name: Create app container from image
+  community.docker.docker_container:
+    name: "{{ deploy_app__container_name }}"
+    image: "{{ deploy_app__image_name }}"
+    state: started
+    recreate: true
+    pull: always
+    restart_policy: on-failure
+    published_ports:
+      - 0.0.0.0:8000:80
