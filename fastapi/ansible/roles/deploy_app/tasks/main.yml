@@ -11,6 +11,8 @@
     state: started
     recreate: true
     pull: always
+    env:
+      OWM_API_KEY: "{{ deploy_app__owm_api_token }}"
     restart_policy: on-failure
     published_ports:
       - 0.0.0.0:80:8000
