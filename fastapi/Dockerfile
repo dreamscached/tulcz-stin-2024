@@ -3,6 +3,7 @@ RUN apk add --no-cache pipx
 
 ADD poetry.lock pyproject.toml /app/
 ADD weather_app /app/weather_app/
+ADD static /app/static
 
 WORKDIR /app/
 RUN pipx run poetry install
