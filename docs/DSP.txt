@@ -1,0 +1,90 @@
+### Balíček specifikací pro aplikaci pro zobrazení a předpověď počasí (Projekt STIN – 2024)
+
+#### 1. Přehled
+Projekt má za cíl vyvinout aplikaci pro zobrazení a předpověď počasí určenou pro uživatele napříč Evropskou unií. Aplikace bude poskytovat aktuální informace o počasí jak textově, tak graficky a předpovědi pro vybraná místa. Bude zahrnovat model placeného předplatného, který umožňuje ukládat oblíbená místa a přistupovat k aktuálním i historickým meteorologickým datům.
+
+#### 2. Funkční požadavky
+
+**2.1 Základní funkce**
+- **Zobrazení počasí:** Aplikace zobrazí aktuální stav počasí v textovém i grafickém formátu.
+- **Výběr místa:** Uživatelé mohou zobrazit počasí pro svou aktuální polohu nebo si vybrat jakékoli místo v EU.
+
+**2.2 Pokročilé funkce (na bázi předplatného)**
+- **Oblíbená místa:** Uživatelé si mohou uložit svá oblíbená místa a zobrazit pro ně předpovědi počasí.
+- **Integrace plateb:** Aplikace podporuje platby za předplatné pro přístup k pokročilým funkcím.
+- **Historická data:** Předplatitelé mají přístup k zobrazení historických meteorologických dat.
+- **Přístup k API:** Poskytování RESTful endpointů pro získávání aktuálních a historických meteorologických dat.
+
+**2.3 Kompatibilita s platformami**
+- Aplikace bude kompatibilní s mobilními telefony i PC a musí fungovat mimo prostředí localhost.
+
+#### 3. Nefunkční požadavky
+
+**3.1 Výkon**
+- Aplikace by měla zvládnout vysoký počet současně připojených uživatelů bez významných zpoždění.
+
+**3.2 Bezpečnost**
+- Zabezpečení platebních transakcí.
+- Dodržování zásad ochrany osobních údajů, zejména GDPR, protože aplikace bude fungovat v rámci EU.
+
+**3.3 Škálovatelnost**
+- Architektura by měla podporovat škálování pro zvládání rostoucího počtu uživatelů a objemu dat.
+
+**3.4 Použitelnost**
+- Uživatelsky přívětivé rozhraní vhodné pro mobilní telefony i PC.
+- Funkce přístupnosti pro uživatele s postižením.
+
+#### 4. Technologický stack
+
+**4.1 Frontend**
+- **Jazyky:** HTML5, CSS3, JavaScript
+- **Frameworky:** Svelte (pro dynamické UI komponenty), TailwindCSS (pro responzivní design)
+
+**4.2 Backend**
+- **Serverový jazyk:** Java
+- **Framework:** Spring (odolný, vhodný pro rychlý vývoj a čistý design)
+- **API:** RESTful služby pro manipulaci s daty
+
+**4.3 Databáze**
+- **Typ:** Relační systém správy databáze (RDBMS)
+- **Technologie:** PostgreSQL (nabízí GIS schopnosti, které jsou užitečné pro služby založené na lokalitě)
+
+**4.4 Nasazení**
+- **Cloudové služby:** Azure pro hosting aplikace i databáze
+- **CI/CD Pipeline:** GitLab CI
+
+ pro nepřetržitou integraci a nasazení
+
+#### 5. Objevování a plánování projektu
+
+**5.1 Hodnocení rizik**
+- Závislost na externích API pro meteorologická data.
+- Dodržování mezinárodních zákonů o ochraně dat.
+- Technická rizika spojená s kompatibilitou napříč platformami.
+
+**5.2 Omezení a omezující faktory**
+- Závislost na dostupnosti a spolehlivosti služeb třetích stran poskytujících meteorologická data.
+- Rozpočtová omezení mohou omezit vývoj pokročilých funkcí.
+- Časová omezení pro vývoj a testovací fáze.
+
+**5.3 Nejasnosti**
+- Nejsou definovány specifické grafické standardy pro reprezentaci meteorologických dat.
+- Nejsou specifikovány podrobnosti o rozsahu historických dat (jak daleko zpět sahají).
+
+**5.4 Možnosti rozšíření**
+- Integrace s chytrými domácími zařízeními pro poskytování automatizace na základě počasí.
+- Nabídka lokalizačních upozornění a oznámení o extrémních povětrnostních podmínkách.
+
+**5.5 Hranice systému**
+- Aplikace nebude podporovat lokality mimo EU.
+- Nebude zpočátku poskytovat upozornění na extrémní počasí v reálném čase.
+
+#### 6. Zapojení a validace zainteresovaných stran
+
+**6.1 Rozhovory a sběr požadavků**
+- Připravte sadu otázek pro vyjasnění nejasností a sběr dalších požadavků.
+- Diskutujte o technické proveditelnosti a obchodních důsledcích se zainteresovanými stranami.
+
+**6.2 Schválení designu a iterace**
+- Představte zainteresovaným stranám počáteční design a prototypy pro zpětnou vazbu.
+- Iterujte na základě zpětné vazby pro zdokonalení funkcí a uživatelské zkušenosti.
