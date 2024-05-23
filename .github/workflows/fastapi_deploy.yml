@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Pytest tests
         working-directory: fastapi
-        run: poetry run coverage --source=weather_app -m pytest
+        run: poetry run coverage run --source=weather_app -m pytest
 
       - name: Get coverage report
         working-directory: fastapi
